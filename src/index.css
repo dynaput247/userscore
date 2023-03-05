@@ -1,3 +1,28 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  background-color: #262626;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+:root {
+  --peak: #71FF00;
+  --strong: #7BDB2E;
+  --primed: #94CA69;
+  --baseline: #BBD1AA;
+  --compromised: #EFB50A;
+  --fatigued: #EF780A;
+  --drained: #F43B2B;
+  --header-background: #2c2c2c;
+  --secondary: #969696;
+  --background: #434242;
+  --background-even: #323232;
+  --outer-circle: #4a4949;
+  --outer-circle-even: #3a3a3a;
+  --row-text: #fefefe;
+  --trail-stroke: #353536
+}
