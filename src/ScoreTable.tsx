@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import styled from 'styled-components'
 
 export default function ScoreTable() {
-    const [scores, setScores] = useState([])
+    const [scores, setScores] = useState<ScoreData>({})
+    const [date, setDate] = useState('')
 
     useEffect(() => {
         fetch('/user-data.json')
@@ -15,7 +16,7 @@ export default function ScoreTable() {
         <Table>
             <thead>
                 <tr>
-                    <th>Name</th>
+                    <th>Athlete</th>
                     <th>Score</th>
                 </tr>
             </thead>
@@ -23,7 +24,7 @@ export default function ScoreTable() {
                 {Object.entries(scores).map(([name, data]) => (
                     <tr key={name}>
                         <td>{name}</td>
-                        <td className="progress-circle" >
+                        <td className="progress-circle-cell" >
                             <CircleProgressBar
                                 strokeColor={getLevelColor(Object.values(data)[0].sc)}
                                 percentage={Object.values(data)[0].sc}
@@ -37,11 +38,22 @@ export default function ScoreTable() {
     )
 }
 
+interface Score {
+    sc: number
+}
+
+interface ScoreData {
+    [name: string]: {
+        [timestamp: string]: Score
+    }
+}
+
 const Table = styled.table`
     width: 300px;
     border-collapse: collapse;
     color: var(--row-text);
     text-transform: uppercase;
+    font-weight: 600;
     thead {
         color: var(--secondary);
     }
@@ -62,6 +74,7 @@ const Table = styled.table`
     th {
         background-color: var(--header-background);
         text-align: center;
+        font-family: 'Arial Nova Light', sans-serif;
 
     }
     th, td {
@@ -71,22 +84,13 @@ const Table = styled.table`
     td {
         padding-left: 17px;
     }
-    .progress-circle {
-    padding-left: 25px;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    .progress-circle-cell {
+        padding-left: 25px;
+        padding-top: 5px;
+        padding-bottom: 5px;
   }
 `
 
-interface Score {
-    sc: number
-}
-
-interface ScoreData {
-    [name: string]: {
-        [timestamp: string]: Score
-    }
-}
 
 const START_TOP_OFFSET = 25;
 const circleConfig = {
@@ -202,6 +206,7 @@ const CircleProgressBar = styled(CircleProgressBarBase)`
     transform: translateY(4.3em);
     fill: var(--secondary);
     font-weight: 600;
+    font-family: 'Arial Nova', sans-serif;
   }
 `;
 
@@ -246,4 +251,3 @@ const colorMap = {
     'Fatigued': 'var(--fatigued)',
     'Drained': 'var(--drained)',
 }
-
