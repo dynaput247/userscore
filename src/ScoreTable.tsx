@@ -24,35 +24,35 @@ export default function ScoreTable() {
 
     return (
         <>
-        <Select onChange={(e) => setDay(parseInt(e.target.value))}>
-            {getDaysFromUserScores()?.map((day, index) => (
-                <option key={index} value={index}>
-                    {convertTimestampToDay(day)}
-                </option>
-            ))}
-        </Select>
-        <Table>
-            <thead>
-                <tr>
-                    <th>Athlete</th>
-                    <th>Score</th>
-                </tr>
-            </thead>
-            <tbody>
-                {Object.entries(scores).map(([name, data]) => (
-                    <tr key={name}>
-                        <td>{name}</td>
-                        <td className="progress-circle-cell" >
-                            <CircleProgressBar
-                                strokeColor={getLevelColor(Object.values(data)[day].sc)}
-                                percentage={Object.values(data)[day].sc}
-                                innerText={getLevelName(Object.values(data)[day].sc)}
-                            />
-                        </td>
-                    </tr>
+            <Select onChange={(e) => setDay(parseInt(e.target.value))}>
+                {getDaysFromUserScores()?.map((day, index) => (
+                    <option key={index} value={index}>
+                        {convertTimestampToDay(day)}
+                    </option>
                 ))}
-            </tbody>
-        </Table>
+            </Select>
+            <Table>
+                <thead>
+                    <tr>
+                        <th>Athlete</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {Object.entries(scores).map(([name, data]) => (
+                        <tr key={name}>
+                            <td>{name}</td>
+                            <td className="progress-circle-cell" >
+                                <CircleProgressBar
+                                    strokeColor={getLevelColor(Object.values(data)[day].sc)}
+                                    percentage={Object.values(data)[day].sc}
+                                    innerText={getLevelName(Object.values(data)[day].sc)}
+                                />
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </Table>
         </>
     )
 }
@@ -147,7 +147,12 @@ const CircleProgressBarBase = ({
     const pace = percentage / speed;
     const updatePercentage = () => {
         setTimeout(() => {
-            setProgressBar(progressBar + 1);
+            if (progressBar < percentage) {
+                setProgressBar(progressBar + 1);
+            }
+            if (progressBar > percentage) {
+                setProgressBar(progressBar - 1);
+            }
         }, pace);
     };
 
@@ -157,6 +162,7 @@ const CircleProgressBarBase = ({
 
     useEffect(() => {
         if (progressBar < percentage) updatePercentage();
+        if (progressBar > percentage) updatePercentage();
     }, [progressBar]);
 
     return (
@@ -168,7 +174,7 @@ const CircleProgressBarBase = ({
                     cy={circleConfig.y}
                     r={circleConfig.outerRadio}
                     strokeWidth="8"
-                    />
+                />
                 <circle
                     cx={circleConfig.x}
                     cy={circleConfig.y}
