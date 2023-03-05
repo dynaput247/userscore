@@ -3,7 +3,17 @@ import styled from 'styled-components'
 
 export default function ScoreTable() {
     const [scores, setScores] = useState<ScoreData>({})
-    const [date, setDate] = useState('')
+    const [day, setDay] = useState(0)
+
+    const getDaysFromUserScores = () => {
+        const days = Object.values(scores)[0]
+        return days ? Object.keys(days) : []
+    }
+
+    const convertTimestampToDay = (timestamp: string) => {
+        const date = new Date(parseInt(timestamp))
+        return date.toUTCString()
+    }
 
     useEffect(() => {
         fetch('/user-data.json')
@@ -13,6 +23,14 @@ export default function ScoreTable() {
     }, [])
 
     return (
+        <>
+        <Select onChange={(e) => setDay(parseInt(e.target.value))}>
+            {getDaysFromUserScores()?.map((day, index) => (
+                <option key={index} value={index}>
+                    {convertTimestampToDay(day)}
+                </option>
+            ))}
+        </Select>
         <Table>
             <thead>
                 <tr>
@@ -26,17 +44,31 @@ export default function ScoreTable() {
                         <td>{name}</td>
                         <td className="progress-circle-cell" >
                             <CircleProgressBar
-                                strokeColor={getLevelColor(Object.values(data)[0].sc)}
-                                percentage={Object.values(data)[0].sc}
-                                innerText={getLevelName(Object.values(data)[0].sc)}
+                                strokeColor={getLevelColor(Object.values(data)[day].sc)}
+                                percentage={Object.values(data)[day].sc}
+                                innerText={getLevelName(Object.values(data)[day].sc)}
                             />
                         </td>
                     </tr>
                 ))}
             </tbody>
         </Table>
+        </>
     )
 }
+
+const Select = styled.select`
+    width: 300px;
+    height: 30px;
+    margin-bottom: 20px;
+    border: 1px solid var(--secondary);
+    border-radius: 5px;
+    background-color: var(--background);
+    color: var(--row-text);
+    text-transform: uppercase;
+    font-weight: 600;
+    font-family: 'Arial Nova Light', sans-serif;
+`
 
 interface Score {
     sc: number
@@ -91,7 +123,6 @@ const Table = styled.table`
   }
 `
 
-
 const START_TOP_OFFSET = 25;
 const circleConfig = {
     viewBox: '0 0 48 59',
@@ -131,7 +162,6 @@ const CircleProgressBarBase = ({
     return (
         <figure className={className}>
             <svg viewBox={circleConfig.viewBox}>
-                {/* wrap circles in another circle */}
                 <circle
                     className="outer-circle"
                     cx={circleConfig.x}
@@ -198,6 +228,7 @@ const CircleProgressBar = styled(CircleProgressBarBase)`
     line-height: 1;
     text-anchor: middle;
     transform: translateY(-0.5em);
+    font-family: 'Arial Nova Light', sans-serif;
   }
   .chart-label {
     font-size: 0.3em;
@@ -209,7 +240,6 @@ const CircleProgressBar = styled(CircleProgressBarBase)`
     font-family: 'Arial Nova', sans-serif;
   }
 `;
-
 
 CircleProgressBar.defaultProps = {
     textColor: 'white',
