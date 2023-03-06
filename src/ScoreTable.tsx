@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
+import CircleProgressBar from './CircleProgressBar'
 
 export default function ScoreTable() {
     const [scores, setScores] = useState<ScoreData>({})
@@ -117,167 +118,35 @@ const Table = styled.table`
         padding-left: 17px;
     }
     .progress-circle-cell {
-        padding-left: 25px;
+        padding-left: 20px;
         padding-top: 5px;
         padding-bottom: 5px;
   }
 `
 
-const START_TOP_OFFSET = 25;
-const circleConfig = {
-    viewBox: '0 0 48 59',
-    x: '24',
-    y: '24',
-    radio: '15.91549430918954',
-    outerRadio: '19',
-};
-
-const CircleProgressBarBase = ({
-    className,
-    strokeColor,
-    strokeWidth = 4,
-    innerText,
-    percentage = 0,
-    trailStrokeWidth = 4,
-    trailStrokeColor = 'var(--trail-stroke',
-    trailSpaced,
-    speed = 20,
-}: CircleProgressBarProps) => {
-    const [progressBar, setProgressBar] = useState(0);
-    const pace = percentage / speed;
-    const updatePercentage = () => {
-        setTimeout(() => {
-            if (progressBar < percentage) {
-                setProgressBar(progressBar + 1);
-            }
-            if (progressBar > percentage) {
-                setProgressBar(progressBar - 1);
-            }
-        }, pace);
-    };
-
-    useEffect(() => {
-        if (percentage > 0) updatePercentage();
-    }, [percentage]);
-
-    useEffect(() => {
-        if (progressBar < percentage) updatePercentage();
-        if (progressBar > percentage) updatePercentage();
-    }, [progressBar]);
-
-    return (
-        <figure className={className}>
-            <svg viewBox={circleConfig.viewBox}>
-                <circle
-                    className="outer-circle"
-                    cx={circleConfig.x}
-                    cy={circleConfig.y}
-                    r={circleConfig.outerRadio}
-                    strokeWidth="8"
-                />
-                <circle
-                    cx={circleConfig.x}
-                    cy={circleConfig.y}
-                    r={circleConfig.radio}
-                    fill="transparent"
-                    stroke={trailStrokeColor}
-                    strokeWidth={trailStrokeWidth}
-                    strokeDasharray={trailSpaced ? 1 : 0}
-                />
-                <circle
-                    cx={circleConfig.x}
-                    cy={circleConfig.y}
-                    r={circleConfig.radio}
-                    fill="transparent"
-                    stroke={strokeColor}
-                    strokeWidth={strokeWidth}
-                    strokeDasharray={`${progressBar} ${100 - progressBar}`}
-                    strokeDashoffset={START_TOP_OFFSET}
-                />
-                <g className="chart-text">
-                    <text x="50%" y="50%" className="chart-number">
-                        {percentage}
-                    </text>
-                    <text x="50%" y="50%" className="chart-label">
-                        {innerText}
-                    </text>
-                </g>
-            </svg>
-        </figure>
-    );
-};
-
-interface CircleProgressBarProps {
-    className?: string
-    strokeColor?: string
-    strokeWidth?: number
-    innerText?: string
-    legendText?: string
-    percentage?: number
-    trailStrokeWidth?: number
-    trailStrokeColor?: string
-    trailSpaced?: boolean
-    speed?: number
-    textColor?: string
-    maxSize?: string
-}
-
-const CircleProgressBar = styled(CircleProgressBarBase)`
-  max-width: ${props => props.maxSize};
-  vertical-align: middle;
-  .chart-text {
-    fill: ${props => props.textColor};
-    transform: translateY(0.25em);
-  }
-  .chart-number {
-    font-size: 0.7em;
-    line-height: 1;
-    text-anchor: middle;
-    transform: translateY(-0.5em);
-    font-family: 'Arial Nova Light', sans-serif;
-  }
-  .chart-label {
-    font-size: 0.3em;
-    text-transform: uppercase;
-    text-anchor: middle;
-    transform: translateY(4.3em);
-    fill: var(--secondary);
-    font-weight: 600;
-    font-family: 'Arial Nova', sans-serif;
-  }
-`;
-
-CircleProgressBar.defaultProps = {
-    textColor: 'white',
-    maxSize: '100px'
-};
-
 const getLevel = (score: number) => {
     if (score >= 84) {
-        return 'Peak'
+        return 'Peak';
     } else if (score >= 70) {
-        return 'Strong'
+        return 'Strong';
     } else if (score >= 60) {
-        return 'Primed'
+        return 'Primed';
     } else if (score >= 40) {
-        return 'Baseline'
+        return 'Baseline';
     } else if (score >= 30) {
-        return 'Compromised'
+        return 'Compromised';
     } else if (score >= 17) {
-        return 'Fatigued'
+        return 'Fatigued';
     } else {
-        return 'Drained'
+        return 'Drained';
     }
-}
-
-const getLevelColor = (score: number) => {
-    return colorMap[getLevel(score)]
-}
-
-const getLevelName = (score: number) => {
-    return getLevel(score)
-}
-
+};
+export const getLevelColor = (score: number) => {
+    return colorMap[getLevel(score)];
+};
+export const getLevelName = (score: number) => {
+    return getLevel(score);
+};
 const colorMap = {
     'Peak': 'var(--peak)',
     'Strong': 'var(--strong)',
@@ -286,4 +155,5 @@ const colorMap = {
     'Compromised': 'var(--compromised)',
     'Fatigued': 'var(--fatigued)',
     'Drained': 'var(--drained)',
-}
+};
+
