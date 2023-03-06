@@ -9,6 +9,7 @@ const circleConfig = {
     radio: '15.91549430918954',
     outerRadio: '19',
 };
+
 const CircleProgressBarBase = ({
     className,
     strokeColor,
@@ -20,8 +21,9 @@ const CircleProgressBarBase = ({
 }: CircleProgressBarProps) => {
     const [progressBar, setProgressBar] = useState(0);
     const pace = percentage / speed;
+
     const updatePercentage = () => {
-        setTimeout(() => {
+        const timeout = setTimeout(() => {
             if (progressBar < percentage) {
                 setProgressBar(progressBar + 1);
             }
@@ -29,19 +31,13 @@ const CircleProgressBarBase = ({
                 setProgressBar(progressBar - 1);
             }
         }, pace);
+        return timeout;
     };
 
     useEffect(() => {
-        if (percentage > 0)
-            updatePercentage();
-    }, [percentage]);
-
-    useEffect(() => {
-        if (progressBar < percentage)
-            updatePercentage();
-        if (progressBar > percentage)
-            updatePercentage();
-    }, [progressBar]);
+        updatePercentage();
+        return () => clearTimeout(updatePercentage());
+    }, [progressBar, percentage]);
 
     return (
         <figure className={className}>
@@ -95,6 +91,7 @@ interface CircleProgressBarProps {
     textColor?: string;
     maxSize?: string;
 }
+
 export const CircleProgressBar = styled(CircleProgressBarBase)`
   max-width: ${props => props.maxSize};
   vertical-align: middle;
@@ -119,8 +116,9 @@ export const CircleProgressBar = styled(CircleProgressBarBase)`
     font-family: 'Arial Nova', sans-serif;
   }
 `;
+
 CircleProgressBar.defaultProps = {
-    textColor: 'white',
+    textColor: 'var(--row-text)',
     maxSize: '100px'
 };
 
