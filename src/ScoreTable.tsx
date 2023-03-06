@@ -17,7 +17,7 @@ export default function ScoreTable() {
     }
 
     useEffect(() => {
-        fetch('/user-data.json')
+        fetch('/data/user-data.json')
             .then((res) => res.json())
             .then((data) => setScores(data))
             .catch((err) => console.error(err))
