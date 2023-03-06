@@ -156,4 +156,3 @@ const colorMap = {
     'Fatigued': 'var(--fatigued)',
     'Drained': 'var(--drained)',
 };
-

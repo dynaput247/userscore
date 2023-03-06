@@ -1,11 +1,16 @@
 import ScoreTable from './ScoreTable'
+import styled from 'styled-components'
 
 function App() {
   return (
-    <div className="App">
+    <AppWrapper>
       <ScoreTable />
-    </div>
+    </AppWrapper>
   )
 }
+
+const AppWrapper = styled.div`
+  margin-top: 15px;
+`
 
 export default App
