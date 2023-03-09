@@ -1,10 +1,12 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
+import { VariableSizeGrid as Grid, VariableSizeGridProps } from 'react-window';
 import CircleProgressBar from './CircleProgressBar'
 
 export default function ScoreTable() {
     const [scores, setScores] = useState<ScoreData>({})
     const [day, setDay] = useState(0)
+    const ref = useRef(null);
 
     const getDaysFromUserScores = () => {
         const days = Object.values(scores)[0]
@@ -16,11 +18,48 @@ export default function ScoreTable() {
         return date.toUTCString()
     }
 
+    const generateRandomData = () => {
+        const randomData: ScoreData = {}
+        const exampleNames = ['Jack', 'Jill', 'John', 'Jane', 'Joe', 'Jen', 'Patric', 'Mark']
+        // generate 1000000 random names using the example names
+        const uniqueNames = [];
+        for (let i = 0; i < 200; i++) {
+            uniqueNames.push(`${exampleNames[Math.floor(Math.random() * exampleNames.length)]}${i}`)
+        }
+        // generate object with random scores
+        uniqueNames.forEach(name => {
+            randomData[name] = {
+                "1677658893169": {
+                    "ac": true,
+                    "cs": Math.floor(Math.random() * 100),
+                    "es": Math.floor(Math.random() * 100),
+                    "ps": Math.floor(Math.random() * 100),
+                    "sc": Math.floor(Math.random() * 100)
+                },
+                "1677749826815": {
+                    "ac": true,
+                    "cs": Math.floor(Math.random() * 100),
+                    "es": Math.floor(Math.random() * 100),
+                    "ps": Math.floor(Math.random() * 100),
+                    "sc": Math.floor(Math.random() * 100)
+                },
+                "1677840221239": {
+                    "ac": true,
+                    "cs": Math.floor(Math.random() * 100),
+                    "es": Math.floor(Math.random() * 100),
+                    "ps": Math.floor(Math.random() * 100),
+                    "sc": Math.floor(Math.random() * 100)
+                }
+            }
+        })
+        return randomData;
+
+    }
+
     useEffect(() => {
-        fetch('./user-data.json')
-            .then((res) => res.json())
-            .then((data) => setScores(data))
-            .catch((err) => console.error(err))
+        // generate random data
+        const randomData = generateRandomData()
+        setScores(randomData)
     }, [])
 
     return (
@@ -32,54 +71,62 @@ export default function ScoreTable() {
                     </option>
                 ))}
             </Select>
-            <Table>
-                <thead>
-                    <tr>
-                        <th>Athlete</th>
-                        <th>Score</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {Object.entries(scores).map(([name, data]) => (
-                        <tr key={name}>
-                            <td>{name}</td>
-                            <td className="progress-circle-cell" >
-                                <CircleProgressBar
-                                    strokeColor={getLevelColor(Object.values(data)[day].sc)}
-                                    percentage={Object.values(data)[day].sc}
-                                    innerText={getLevelName(Object.values(data)[day].sc)}
-                                />
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </Table>
+                        <GridWrapper
+                        columnCount={2}
+                        columnWidth={index => (index === 0 ? 150 : 200)}
+                        height={400}
+                        rowCount={Object.keys(scores).length}
+                        rowHeight={index => 30}
+                        width={300}
+                        className="Grid"
+                    >
+                        {({ columnIndex, rowIndex, style }) => { 
+                            const name = Object.keys(scores)[rowIndex]
+                            const day = Object.keys(scores[name])[columnIndex]
+                            const score = scores[name][day]
+                            return (
+                                <div style={style}>
+                                    {columnIndex === 0 ? (
+                                        <div className="GridItemOdd">{name}</div>
+                                    ) : (
+                                        // <div className="GridItemEven">
+                                        //     <CircleProgressBar
+
+                                        //         score={score.sc}
+                                        //         color="var(--row-text)"
+                                        //         size={20}
+                                        //         strokeWidth={3}
+                                        //     />
+                                        // </div>
+                                        <div>{score.sc}</div>
+                                    )}
+                                </div>
+                            )
+                        }}
+                    </GridWrapper>
         </>
     )
 }
 
-const Select = styled.select`
-    width: 300px;
-    height: 30px;
-    margin-bottom: 20px;
-    border: 1px solid var(--secondary);
-    border-radius: 5px;
-    background-color: var(--background);
-    color: var(--row-text);
-    text-transform: uppercase;
-    font-weight: 600;
-    font-family: 'Arial Nova Light', sans-serif;
+const GridWrapper = styled(Grid)`
+
+.Grid {
+  border: 1px solid #d9dddd;
+}
+
+.GridItemEven,
+.GridItemOdd {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.GridItemEven {
+  background-color: #f8f8f0;
+}
 `
 
-interface Score {
-    sc: number
-}
 
-interface ScoreData {
-    [name: string]: {
-        [timestamp: string]: Score
-    }
-}
 
 const Table = styled.table`
     width: 300px;
@@ -89,6 +136,7 @@ const Table = styled.table`
     font-weight: 600;
     thead {
         color: var(--secondary);
+        width: 300px;
     }
     tr:nth-child(even) {
         background-color: var(--background-even);
@@ -122,7 +170,43 @@ const Table = styled.table`
         padding-top: 5px;
         padding-bottom: 5px;
   }
+  /* .rows {
+    content-visibility: auto;
+  } */
 `
+
+// display sticky select on the top
+
+
+const Select = styled.select`
+    width: 300px;
+    height: 30px;
+    margin-bottom: 20px;
+    border: 1px solid var(--secondary);
+    border-radius: 5px;
+    background-color: var(--background);
+    color: var(--row-text);
+    text-transform: uppercase;
+    font-weight: 600;
+    font-family: 'Arial Nova Light', sans-serif;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+`
+
+interface Score {
+    ac?: boolean
+    cs?: number
+    es?: number
+    ps?: number
+    sc: number
+}
+
+interface ScoreData {
+    [name: string]: {
+        [timestamp: string]: Score
+    }
+}
 
 const getLevel = (score: number) => {
     if (score >= 84) {
