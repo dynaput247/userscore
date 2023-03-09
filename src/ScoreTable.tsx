@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
-import { VariableSizeGrid as Grid, VariableSizeGridProps } from 'react-window';
+import { VariableSizeGrid as Grid } from 'react-window';
 import CircleProgressBar from './CircleProgressBar'
 
 export default function ScoreTable() {
-    const [scores, setScores] = useState<ScoreData>({})
-    const [day, setDay] = useState(0)
-    const ref = useRef(null);
+    // const [scores, setScores] = useState<ScoreData>({})
+    const day = '1677658893169';
+
 
     const getDaysFromUserScores = () => {
         const days = Object.values(scores)[0]
@@ -23,7 +23,7 @@ export default function ScoreTable() {
         const exampleNames = ['Jack', 'Jill', 'John', 'Jane', 'Joe', 'Jen', 'Patric', 'Mark']
         // generate 1000000 random names using the example names
         const uniqueNames = [];
-        for (let i = 0; i < 200; i++) {
+        for (let i = 0; i < 20000; i++) {
             uniqueNames.push(`${exampleNames[Math.floor(Math.random() * exampleNames.length)]}${i}`)
         }
         // generate object with random scores
@@ -56,77 +56,90 @@ export default function ScoreTable() {
 
     }
 
-    useEffect(() => {
-        // generate random data
-        const randomData = generateRandomData()
-        setScores(randomData)
-    }, [])
+    const scores = generateRandomData();
+
+    // useEffect(() => {
+    //     // generate random data
+    //     const randomData = generateRandomData()
+    //     setScores(randomData)
+    // }, [])
+
+    const Cell = ({ columnIndex, rowIndex, style }: any) => {
+        const name = Object.keys(scores)[rowIndex];
+        // console.log('scores ', scores)
+        // console.log('name ', name)
+        const score = scores?.[name]?.[day]?.sc;
+        return (
+            <div style={style}>
+                {columnIndex === 0 ? name : (
+                    <CircleProgressBar
+                        strokeColor={getLevelColor(score)}
+                        percentage={score}
+                        innerText={getLevelName(score)}
+                        key={name}
+                    />
+                )}
+            </div>
+        );
+    };
+
 
     return (
         <>
-            <Select onChange={(e) => setDay(parseInt(e.target.value))}>
+            {/* <Select onChange={(e) => setDay(parseInt(e.target.value))}>
                 {getDaysFromUserScores()?.map((day, index) => (
                     <option key={index} value={index}>
                         {convertTimestampToDay(day)}
                     </option>
                 ))}
-            </Select>
-                        <GridWrapper
-                        columnCount={2}
-                        columnWidth={index => (index === 0 ? 150 : 200)}
-                        height={400}
-                        rowCount={Object.keys(scores).length}
-                        rowHeight={index => 30}
-                        width={300}
-                        className="Grid"
-                    >
-                        {({ columnIndex, rowIndex, style }) => { 
-                            const name = Object.keys(scores)[rowIndex]
-                            const day = Object.keys(scores[name])[columnIndex]
-                            const score = scores[name][day]
-                            return (
-                                <div style={style}>
-                                    {columnIndex === 0 ? (
-                                        <div className="GridItemOdd">{name}</div>
-                                    ) : (
-                                        // <div className="GridItemEven">
-                                        //     <CircleProgressBar
-
-                                        //         score={score.sc}
-                                        //         color="var(--row-text)"
-                                        //         size={20}
-                                        //         strokeWidth={3}
-                                        //     />
-                                        // </div>
-                                        <div>{score.sc}</div>
-                                    )}
-                                </div>
-                            )
-                        }}
-                    </GridWrapper>
+            </Select> */}
+            <Grid
+                className="Grid"
+                columnCount={1000}
+                columnWidth={(index) => index === 0 ? 200 : 100}
+                height={500}
+                rowCount={Object.keys(scores).length}
+                rowHeight={index => 50}
+                width={300}
+            >
+                {Cell}
+            </Grid>
         </>
     )
 }
 
-const GridWrapper = styled(Grid)`
+// display sticky select on the top
 
-.Grid {
-  border: 1px solid #d9dddd;
-}
 
-.GridItemEven,
-.GridItemOdd {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.GridItemEven {
-  background-color: #f8f8f0;
-}
+const Select = styled.select`
+    width: 300px;
+    height: 30px;
+    margin-bottom: 20px;
+    border: 1px solid var(--secondary);
+    border-radius: 5px;
+    background-color: var(--background);
+    color: var(--row-text);
+    text-transform: uppercase;
+    font-weight: 600;
+    font-family: 'Arial Nova Light', sans-serif;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 `
 
+interface Score {
+    ac?: boolean
+    cs?: number
+    es?: number
+    ps?: number
+    sc: number
+}
 
+interface ScoreData {
+    [name: string]: {
+        [timestamp: string]: Score
+    }
+}
 
 const Table = styled.table`
     width: 300px;
@@ -174,39 +187,6 @@ const Table = styled.table`
     content-visibility: auto;
   } */
 `
-
-// display sticky select on the top
-
-
-const Select = styled.select`
-    width: 300px;
-    height: 30px;
-    margin-bottom: 20px;
-    border: 1px solid var(--secondary);
-    border-radius: 5px;
-    background-color: var(--background);
-    color: var(--row-text);
-    text-transform: uppercase;
-    font-weight: 600;
-    font-family: 'Arial Nova Light', sans-serif;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-`
-
-interface Score {
-    ac?: boolean
-    cs?: number
-    es?: number
-    ps?: number
-    sc: number
-}
-
-interface ScoreData {
-    [name: string]: {
-        [timestamp: string]: Score
-    }
-}
 
 const getLevel = (score: number) => {
     if (score >= 84) {
