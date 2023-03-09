@@ -125,12 +125,12 @@ export default function ScoreTable() {
 
 const StyledCell = styled.div`
     font-size: 14px;
-    font-family: 'Arial Nova Light', sans-serif;
+    font-family: 'Arial Nova Cond', sans-serif;
     color: var(--row-text);
     text-transform: uppercase;
     font-weight: 600;
     position: relative;
-    top: 45px;
+    top: 60px;
     left: 20px;
     .CircleProgressBar {
         position: relative;
@@ -179,6 +179,7 @@ const Header = styled.div`
     align-items: center;
     justify-content: center;
     text-transform: uppercase;
+    font-weight: 600;
     span {
         border-right: 1px solid var(--secondary);
         display: flex;
@@ -192,7 +193,7 @@ const Header = styled.div`
         font-weight: 600;
     }
     span:first-child {
-        width: 162px;
+        width: 163px;
     }
 `
 
