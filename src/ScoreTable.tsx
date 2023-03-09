@@ -70,8 +70,10 @@ export default function ScoreTable() {
         // console.log('name ', name)
         const score = scores?.[name]?.[day]?.sc;
         return (
-            <div style={style}>
-                {columnIndex === 0 ? name : (
+            <div style={style}
+                className="Cell"
+            >
+                {columnIndex === 0 ? (<StyledCell>{name}</StyledCell>) : (
                     <CircleProgressBar
                         strokeColor={getLevelColor(score)}
                         percentage={score}
@@ -83,7 +85,6 @@ export default function ScoreTable() {
         );
     };
 
-
     return (
         <>
             {/* <Select onChange={(e) => setDay(parseInt(e.target.value))}>
@@ -93,13 +94,22 @@ export default function ScoreTable() {
                     </option>
                 ))}
             </Select> */}
+            {/* Athlete Score Table */}
+            <Table>
+                <thead>
+                    <tr>
+                        <th>Athlete</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+            </Table>
             <Grid
                 className="Grid"
                 columnCount={1000}
-                columnWidth={(index) => index === 0 ? 200 : 100}
+                columnWidth={(index) => index === 0 ? 162.56 : 136.45}
                 height={500}
                 rowCount={Object.keys(scores).length}
-                rowHeight={index => 50}
+                rowHeight={index => 130}
                 width={300}
             >
                 {Cell}
@@ -109,6 +119,19 @@ export default function ScoreTable() {
 }
 
 // display sticky select on the top
+
+
+const StyledCell = styled.div`
+    font-size: 14px;
+    font-family: 'Arial Nova Light', sans-serif;
+    color: var(--row-text);
+    text-transform: uppercase;
+    font-weight: 600;
+    position: absolute;
+    top: 45px;
+    left: 20px;
+`
+
 
 
 const Select = styled.select`
