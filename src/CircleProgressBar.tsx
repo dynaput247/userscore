@@ -6,14 +6,14 @@ const circleConfig = {
     viewBox: '0 0 48 59',
     x: '24',
     y: '24',
-    radio: '15.91549430918954',
-    outerRadio: '19',
+    radio: '12',
+    outerRadio: '14',
 };
 
 const CircleProgressBarBase = ({
     className,
     strokeColor,
-    strokeWidth = 4,
+    strokeWidth = 4.1,
     innerText, percentage = 0,
     trailStrokeWidth = 4,
     trailStrokeColor = 'var(--trail-stroke',

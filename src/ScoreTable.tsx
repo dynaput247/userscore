@@ -4,9 +4,13 @@ import { VariableSizeGrid as Grid } from 'react-window';
 import CircleProgressBar from './CircleProgressBar'
 
 export default function ScoreTable() {
-    // const [scores, setScores] = useState<ScoreData>({})
-    const day = '1677658893169';
+    const [day, setDay] = useState('1677658893169')
 
+    const changeDay = (e: any) => {
+        const days = Object.values(scores)[0]
+        const day = Object.keys(days)[e]
+        setDay(day)
+    }
 
     const getDaysFromUserScores = () => {
         const days = Object.values(scores)[0]
@@ -58,17 +62,11 @@ export default function ScoreTable() {
 
     const scores = generateRandomData();
 
-    // useEffect(() => {
-    //     // generate random data
-    //     const randomData = generateRandomData()
-    //     setScores(randomData)
-    // }, [])
-
     const Cell = ({ columnIndex, rowIndex, style }: any) => {
         const name = Object.keys(scores)[rowIndex];
-        // console.log('scores ', scores)
-        // console.log('name ', name)
-        const score = scores?.[name]?.[day]?.sc;
+        const score = useMemo(() => {
+            return scores?.[name]?.[day]?.sc;
+        }, [scores, name, day]);
         return (
             <div style={style}
                 className={
@@ -98,13 +96,13 @@ export default function ScoreTable() {
 
     return (
         <>
-            {/* <Select onChange={(e) => setDay(parseInt(e.target.value))}>
+            <Select onChange={(e) => changeDay(parseInt(e.target.value))}>
                 {getDaysFromUserScores()?.map((day, index) => (
                     <option key={index} value={index}>
                         {convertTimestampToDay(day)}
                     </option>
                 ))}
-            </Select> */}
+            </Select>
             {/* Athlete Score Table */}
             <Header>
                         <span>Athlete</span>
@@ -112,7 +110,7 @@ export default function ScoreTable() {
             </Header>
             <Grid
                 className="Grid"
-                columnCount={1000}
+                columnCount={2}
                 columnWidth={(index) => index === 0 ? 162 : 137}
                 height={800}
                 rowCount={Object.keys(scores).length}
@@ -124,9 +122,6 @@ export default function ScoreTable() {
         </>
     )
 }
-
-// display sticky select on the top
-
 
 const StyledCell = styled.div`
     font-size: 14px;
@@ -143,8 +138,6 @@ const StyledCell = styled.div`
         right: 0px;
     }
 `
-
-
 
 const Select = styled.select`
     width: 300px;
@@ -177,21 +170,15 @@ interface ScoreData {
 }
 
 const Header = styled.div`
-    /* width 300 with the border color --secondary */
     width: 300px;
     height: 30px;
     border: 1px solid var(--secondary);
     background-color: var(--header-background);
-    /* font light  */
     color: var(--row-text);
     display: flex;
     align-items: center;
     justify-content: center;
     text-transform: uppercase;
-    /* :first-child {
-        width: 162px;
-    } */
-    /* add border between flex items */
     span {
         border-right: 1px solid var(--secondary);
         display: flex;
@@ -200,13 +187,11 @@ const Header = styled.div`
         height: 100%;
         width: 137px;
         font-family: 'Arial Nova Light', sans-serif;
-        font-size: 13px;
+        font-size: 14px;
         color: var(--secondary);
         font-weight: 600;
     }
-    /* second span 137 width */
     span:first-child {
-        /* border: 1px solid var(--secondary); */
         width: 162px;
     }
 `
