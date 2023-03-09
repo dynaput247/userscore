@@ -110,7 +110,7 @@ export const CircleProgressBar = styled(CircleProgressBarBase)`
     font-size: 0.3em;
     text-transform: uppercase;
     text-anchor: middle;
-    transform: translateY(4.3em);
+    transform: translateY(3.7em);
     fill: var(--secondary);
     font-weight: 600;
     font-family: 'Arial Nova', sans-serif;
