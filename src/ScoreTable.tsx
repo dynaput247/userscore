@@ -71,15 +71,26 @@ export default function ScoreTable() {
         const score = scores?.[name]?.[day]?.sc;
         return (
             <div style={style}
-                className="Cell"
+                className={
+                    columnIndex % 2
+                      ? rowIndex % 2 === 0
+                        ? 'GridItemOdd'
+                        : 'GridItemEven'
+                      : rowIndex % 2
+                      ? 'GridItemEven'
+                      : 'GridItemOdd'
+                  }
             >
                 {columnIndex === 0 ? (<StyledCell>{name}</StyledCell>) : (
+                    <StyledCell>
                     <CircleProgressBar
+                        className="CircleProgressBar"
                         strokeColor={getLevelColor(score)}
                         percentage={score}
                         innerText={getLevelName(score)}
                         key={name}
                     />
+                    </StyledCell>
                 )}
             </div>
         );
@@ -95,19 +106,15 @@ export default function ScoreTable() {
                 ))}
             </Select> */}
             {/* Athlete Score Table */}
-            <Table>
-                <thead>
-                    <tr>
-                        <th>Athlete</th>
-                        <th>Score</th>
-                    </tr>
-                </thead>
-            </Table>
+            <Header>
+                        <span>Athlete</span>
+                        <span>Score</span>
+            </Header>
             <Grid
                 className="Grid"
                 columnCount={1000}
-                columnWidth={(index) => index === 0 ? 162.56 : 136.45}
-                height={500}
+                columnWidth={(index) => index === 0 ? 162 : 137}
+                height={800}
                 rowCount={Object.keys(scores).length}
                 rowHeight={index => 130}
                 width={300}
@@ -127,9 +134,14 @@ const StyledCell = styled.div`
     color: var(--row-text);
     text-transform: uppercase;
     font-weight: 600;
-    position: absolute;
+    position: relative;
     top: 45px;
     left: 20px;
+    .CircleProgressBar {
+        position: relative;
+        bottom: 45px;
+        right: 0px;
+    }
 `
 
 
@@ -164,51 +176,39 @@ interface ScoreData {
     }
 }
 
-const Table = styled.table`
+const Header = styled.div`
+    /* width 300 with the border color --secondary */
     width: 300px;
-    border-collapse: collapse;
+    height: 30px;
+    border: 1px solid var(--secondary);
+    background-color: var(--header-background);
+    /* font light  */
     color: var(--row-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-transform: uppercase;
-    font-weight: 600;
-    thead {
-        color: var(--secondary);
-        width: 300px;
-    }
-    tr:nth-child(even) {
-        background-color: var(--background-even);
-        .outer-circle {
-            stroke: var(--outer-circle-even);
-            fill: var(--outer-circle-even);
-        }
-    }
-    tr:nth-child(odd) {
-        background-color: var(--background);
-        .outer-circle {
-            stroke: var(--outer-circle);
-            fill: var(--outer-circle);
-        }
-    }
-    th {
-        background-color: var(--header-background);
-        text-align: center;
+    /* :first-child {
+        width: 162px;
+    } */
+    /* add border between flex items */
+    span {
+        border-right: 1px solid var(--secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        width: 137px;
         font-family: 'Arial Nova Light', sans-serif;
-
+        font-size: 13px;
+        color: var(--secondary);
+        font-weight: 600;
     }
-    th, td {
-        border: 1px solid var(--secondary);
-        padding: 8px;
+    /* second span 137 width */
+    span:first-child {
+        /* border: 1px solid var(--secondary); */
+        width: 162px;
     }
-    td {
-        padding-left: 17px;
-    }
-    .progress-circle-cell {
-        padding-left: 20px;
-        padding-top: 5px;
-        padding-bottom: 5px;
-  }
-  /* .rows {
-    content-visibility: auto;
-  } */
 `
 
 const getLevel = (score: number) => {

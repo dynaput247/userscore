@@ -50,3 +50,39 @@ body {
   --row-text: #fefefe;
   --trail-stroke: #353536
 }
+
+.Cell {
+  border: 1px solid var(--secondary);
+}
+
+
+.GridItemEven {
+  background-color: var(--background-even);
+  border: 1px solid var(--secondary);
+}
+
+.GridItemOdd {
+  background-color: var(--background);
+  border: 1px solid var(--secondary);
+}
+
+.GridItemEven .outer-circle  {
+  /* background-color: var(--background-even); */
+      stroke: var(--outer-circle-even);
+      fill: var(--outer-circle-even);
+}
+.GridItemOdd .outer-circle {
+  /* background-color: var(--background); */
+      stroke: var(--outer-circle);
+      fill: var(--outer-circle);
+}
+
+.Grid {
+  /* thin scrollbar */
+  scrollbar-width: thin;
+  border: 1px solid var(--secondary);
+  background-image: linear-gradient(var(--secondary),var(--secondary)000);
+  background-size: 2px 100%;
+  background-repeat: no-repeat;
+  background-position: 162px 0px, 0px 0px;
+}
